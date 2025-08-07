@@ -1,5 +1,6 @@
 package com.kafka.kafkaproducerconsumer.service;
 
+import com.kafka.kafkaproducerconsumer.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -25,6 +26,25 @@ public class KafkaMessagePub {
                         message + "] due to: "+error.getMessage());
             }
         });
+
+    }
+
+    public void sendUserMessage(User user){
+        try{
+            CompletableFuture<SendResult<String, Object>> kafkaDemo = template.send("kafkaSd", user);
+            kafkaDemo.whenComplete((result,error)->{
+                if(error == null){
+                    System.out.println("Sent message=["+ user.toString() +
+                            "] with offset=[" + result.getRecordMetadata().offset());
+                }
+                else {
+                    System.out.println("Unable to send message=[" +
+                            user.toString() + "] due to: "+error.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
